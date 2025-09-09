@@ -13,17 +13,19 @@ private:
 
 	void AddDiamonds(int amount)
 	{
-		MonoMethod* AwardDiamonds = Mono::Instance().GetMethod("Utilities", "AwardDiamonds", 1);
+		MonoMethod* AwardDiamonds = Mono::Instance().GetMethod("Utilities", "AwardDiamonds", 2);
 		if (AwardDiamonds == nullptr)
 		{
-			LogError("GiveDiamonds", "Unable to retieve a pointer to Utilities.AwardDiamonds");
+			LogError("GiveDiamonds", "Unable to retrieve a pointer to Utilities.AwardDiamonds");
 			return;
 		}
 
-		void* args[1] = { &amount };
+		bool forceDiamonds = true; // ensure it always adds
+		void* args[2] = { &amount, &forceDiamonds };
+
 		MonoObject* result = Mono::Instance().Invoke(AwardDiamonds, nullptr, args);
 
-		if (bExtraDebug)
+		if (bExtraDebug && result != nullptr)
 			LogInvoke("GiveDiamonds", "AwardDiamonds returned: " + std::to_string(*(bool*)Mono::Instance().GetValue(result)));
 	}
 
